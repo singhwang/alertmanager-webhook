@@ -1,0 +1,92 @@
+basePath: /
+definitions:
+  model.Alert:
+    properties:
+      annotations:
+        type: object
+      endsAt:
+        type: string
+      labels:
+        type: object
+      startsAt:
+        type: string
+    type: object
+  model.FailureResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  model.HandleResult:
+    properties:
+      result:
+        type: string
+      status:
+        type: integer
+    type: object
+  model.Notification:
+    properties:
+      alerts:
+        items:
+          $ref: '#/definitions/model.Alert'
+        type: array
+      commonAnnotations:
+        type: object
+      commonLabels:
+        type: object
+      externalURL:
+        type: string
+      groupKey:
+        type: string
+      groupLabels:
+        type: object
+      receiver:
+        type: string
+      status:
+        type: string
+      version:
+        type: string
+    type: object
+host: '{{.Host}}'
+info:
+  contact:
+    email: wangxin_0611@126.com
+    name: 王欣
+  description: 用于接收alertmanager告警信息的webhook服务.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: alertmanager-webhook服务
+  version: "1.0"
+paths:
+  /api/v1/node/disk/total/usage/:
+    post:
+      consumes:
+      - application/json
+      description: 接收Alertmanager发送的告警信息.
+      parameters:
+      - description: Alertmanager发送的告警信息.
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Notification'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HandleResult'
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.FailureResponse'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: PostWebhook
+      tags:
+      - Alertmanager
+swagger: "2.0"
